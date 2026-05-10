@@ -9413,7 +9413,13 @@ Decisão:       [OK] Baixo risco — análise segmentada por perfil_usuario é d
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Célula executada com sucesso.
+<pre>Célula executada com sucesso.</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
 </pre>
 </div>
 </div>
@@ -9872,7 +9878,13 @@ Decisão:       [OK] Médio risco — documentar premissa de escala ao apresenta
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Célula executada com sucesso.
+<pre>Célula executada com sucesso.</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>
 </pre>
 </div>
 </div>
@@ -10701,7 +10713,13 @@ Decisão:       [AVISO] Médio risco — documentar ausência de anomalias como 
 
 Decomposição — de onde vem o efeito?
   busca_interna        (amostra insuficiente)
-  home_direta          com busca: 62%  | sem busca: 77%
+</pre>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>  home_direta          com busca: 62%  | sem busca: 77%
   link_email           com busca: 50%  | sem busca: 79%
   atalho_sistema       com busca: 70%  | sem busca: 74%
 
@@ -11581,6 +11599,234 @@ Teste T-Student: t=-1.80, p-value=7.2496e-02
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Gráfico 8.4.7 (Bar Chart Agrupado) gerado com sucesso.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c6898360">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="8.5-An%C3%A1lise-Preditiva:-Modelando-o-Abandono-de-Sess%C3%A3o-(Machine-Learning)">8.5 Análise Preditiva: Modelando o Abandono de Sessão (Machine Learning)<a class="anchor-link" href="#8.5-An%C3%A1lise-Preditiva:-Modelando-o-Abandono-de-Sess%C3%A3o-(Machine-Learning)">¶</a></h3><p>Treinamento de um classificador Random Forest para descobrir quais variaveis tem maior peso na predicao do abandono rapido.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=8af9a51a">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [42]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.ensemble</span><span class="w"> </span><span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Preparacao dos dados</span>
+<span class="n">df_ml</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">cat_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'perfil_usuario'</span><span class="p">,</span> <span class="s1">'tipo_dispositivo'</span><span class="p">,</span> <span class="s1">'origem_acesso'</span><span class="p">,</span> <span class="s1">'objetivo_sessao'</span><span class="p">,</span> <span class="s1">'faixa_horaria'</span><span class="p">]</span>
+<span class="n">le</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cat_cols</span><span class="p">:</span>
+    <span class="n">df_ml</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">le</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df_ml</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+
+<span class="c1"># Features e Target</span>
+<span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'perfil_usuario'</span><span class="p">,</span> <span class="s1">'tipo_dispositivo'</span><span class="p">,</span> <span class="s1">'origem_acesso'</span><span class="p">,</span> <span class="s1">'objetivo_sessao'</span><span class="p">,</span> <span class="s1">'pageviews'</span><span class="p">,</span> <span class="s1">'faixa_horaria'</span><span class="p">]</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df_ml</span><span class="p">[</span><span class="n">features</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df_ml</span><span class="p">[</span><span class="s1">'abandono_rapido'</span><span class="p">]</span>
+
+<span class="c1"># Treinamento</span>
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Importancia das Variaveis</span>
+<span class="n">importances</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'Variavel'</span><span class="p">:</span> <span class="n">features</span><span class="p">,</span> <span class="s1">'Importancia'</span><span class="p">:</span> <span class="n">rf</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">})</span>
+<span class="n">importances</span> <span class="o">=</span> <span class="n">importances</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">'Importancia'</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fig_ml</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">importances</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">'Importancia'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">'Variavel'</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">'h'</span><span class="p">,</span>
+             <span class="n">title</span><span class="o">=</span><span class="s1">'Importancia das Variaveis na Predicao de Abandono (Random Forest)'</span><span class="p">)</span>
+<span class="n">fig_ml</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Grafico 8.5 (Feature Importance ML) gerado com sucesso.'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Grafico 8.5 (Feature Importance ML) gerado com sucesso.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c99512f5">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="8.6-Fluxo-de-Navegacao:-O-Caminho-do-Usuario-(Sankey-Diagram)">8.6 Fluxo de Navegacao: O Caminho do Usuario (Sankey Diagram)<a class="anchor-link" href="#8.6-Fluxo-de-Navegacao:-O-Caminho-do-Usuario-(Sankey-Diagram)">¶</a></h3><p>Mapeamento visual do fluxo desde a origem do acesso ate o resultado da sessao.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=99df8612">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [43]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+
+<span class="c1"># Agrupar os fluxos principais</span>
+<span class="n">flow_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'origem_acesso'</span><span class="p">,</span> <span class="s1">'objetivo_sessao'</span><span class="p">,</span> <span class="s1">'sucesso_encontrou_o_que_queria'</span><span class="p">])</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'count'</span><span class="p">)</span>
+<span class="n">flow_df</span><span class="p">[</span><span class="s1">'sucesso_label'</span><span class="p">]</span> <span class="o">=</span> <span class="n">flow_df</span><span class="p">[</span><span class="s1">'sucesso_encontrou_o_que_queria'</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="mi">1</span><span class="p">:</span> <span class="s1">'Sucesso'</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s1">'Falha/Abandono'</span><span class="p">})</span>
+
+<span class="c1"># Criar nos</span>
+<span class="n">all_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">flow_df</span><span class="p">[</span><span class="s1">'origem_acesso'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">flow_df</span><span class="p">[</span><span class="s1">'objetivo_sessao'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">flow_df</span><span class="p">[</span><span class="s1">'sucesso_label'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+<span class="n">node_indices</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_nodes</span><span class="p">)}</span>
+
+<span class="c1"># Criar links</span>
+<span class="n">source</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">target</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">value</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">flow_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="c1"># Origem -&gt; Objetivo</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_indices</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">'origem_acesso'</span><span class="p">]])</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_indices</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">'objetivo_sessao'</span><span class="p">]])</span>
+    <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">'count'</span><span class="p">])</span>
+    
+    <span class="c1"># Objetivo -&gt; Sucesso</span>
+    <span class="n">source</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_indices</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">'objetivo_sessao'</span><span class="p">]])</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node_indices</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">'sucesso_label'</span><span class="p">]])</span>
+    <span class="n">value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">'count'</span><span class="p">])</span>
+
+<span class="n">fig_sankey</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Sankey</span><span class="p">(</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+      <span class="n">pad</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+      <span class="n">thickness</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+      <span class="n">line</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="s2">"black"</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">),</span>
+      <span class="n">label</span> <span class="o">=</span> <span class="n">all_nodes</span><span class="p">,</span>
+      <span class="n">color</span> <span class="o">=</span> <span class="s2">"blue"</span>
+    <span class="p">),</span>
+    <span class="n">link</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+      <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">,</span>
+      <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+  <span class="p">))])</span>
+
+<span class="n">fig_sankey</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title_text</span><span class="o">=</span><span class="s2">"Diagrama de Sankey: Jornada do Usuario na Intranet"</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fig_sankey</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Grafico 8.6 (Sankey Diagram) gerado com sucesso.'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Grafico 8.6 (Sankey Diagram) gerado com sucesso.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=74e57a19">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="8.7-Teste-A/B-Simulado:-Experiencia-Desktop-vs-Mobile">8.7 Teste A/B Simulado: Experiencia Desktop vs Mobile<a class="anchor-link" href="#8.7-Teste-A/B-Simulado:-Experiencia-Desktop-vs-Mobile">¶</a></h3><p>Teste estatistico (Z-Test de Proporcoes) para validar se a taxa de sucesso difere significativamente entre as plataformas.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=616da1f0">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [44]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.proportion</span><span class="w"> </span><span class="kn">import</span> <span class="n">proportions_ztest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Vamos agrupar mobile_web e mobile_app como 'mobile'</span>
+<span class="n">df_ab</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df_ab</span><span class="p">[</span><span class="s1">'plataforma'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_ab</span><span class="p">[</span><span class="s1">'tipo_dispositivo'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">'desktop'</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">'desktop'</span> <span class="k">else</span> <span class="s1">'mobile'</span><span class="p">)</span>
+
+<span class="c1"># Calculo de sucessos e totais</span>
+<span class="n">sucessos</span> <span class="o">=</span> <span class="n">df_ab</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'plataforma'</span><span class="p">)[</span><span class="s1">'sucesso_encontrou_o_que_queria'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">totais</span> <span class="o">=</span> <span class="n">df_ab</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'plataforma'</span><span class="p">)[</span><span class="s1">'sucesso_encontrou_o_que_queria'</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+<span class="n">count</span> <span class="o">=</span> <span class="p">[</span><span class="n">sucessos</span><span class="p">[</span><span class="s1">'desktop'</span><span class="p">],</span> <span class="n">sucessos</span><span class="p">[</span><span class="s1">'mobile'</span><span class="p">]]</span>
+<span class="n">nobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">totais</span><span class="p">[</span><span class="s1">'desktop'</span><span class="p">],</span> <span class="n">totais</span><span class="p">[</span><span class="s1">'mobile'</span><span class="p">]]</span>
+
+<span class="c1"># Teste Z para proporcoes</span>
+<span class="n">z_stat</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">proportions_ztest</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+
+<span class="n">taxa_desk</span> <span class="o">=</span> <span class="n">sucessos</span><span class="p">[</span><span class="s1">'desktop'</span><span class="p">]</span> <span class="o">/</span> <span class="n">totais</span><span class="p">[</span><span class="s1">'desktop'</span><span class="p">]</span>
+<span class="n">taxa_mob</span> <span class="o">=</span> <span class="n">sucessos</span><span class="p">[</span><span class="s1">'mobile'</span><span class="p">]</span> <span class="o">/</span> <span class="n">totais</span><span class="p">[</span><span class="s1">'mobile'</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Teste A/B: Taxa de Sucesso (Desktop vs Mobile)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">45</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Taxa Desktop: </span><span class="si">{</span><span class="n">taxa_desk</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> (n=</span><span class="si">{</span><span class="n">totais</span><span class="p">[</span><span class="s1">'desktop'</span><span class="p">]</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Taxa Mobile:  </span><span class="si">{</span><span class="n">taxa_mob</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> (n=</span><span class="si">{</span><span class="n">totais</span><span class="p">[</span><span class="s1">'mobile'</span><span class="p">]</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Z-Statistic:  </span><span class="si">{</span><span class="n">z_stat</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"P-Value:      </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">45</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Veredito: Existe diferenca estatistica significativa entre Desktop e Mobile."</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Veredito: Nao ha diferenca estatistica significativa."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Teste A/B: Taxa de Sucesso (Desktop vs Mobile)
+---------------------------------------------
+Taxa Desktop: 72.3% (n=4873)
+Taxa Mobile:  73.2% (n=127)
+Z-Statistic:  -0.242
+P-Value:      0.8089
+---------------------------------------------
+Veredito: Nao ha diferenca estatistica significativa.
 </pre>
 </div>
 </div>
